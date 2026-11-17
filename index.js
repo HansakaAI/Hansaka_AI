@@ -1,13 +1,20 @@
 import makeWASocket, { DisconnectReason, useMultiFileAuthState } from '@whiskeysockets/baileys'
 import axios from 'axios'
-import pino from 'pino'
 import fs from 'fs'
 
 const GROQ_KEY = process.env.GROQ_API_KEY
 const PHONE_NUMBER = process.env.PHONE_NUMBER // 947XXXXXXXX වගේ, 0 නැතුව
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
 
-const SYSTEM_PROMPT = `මම SiaaAI A/L TECH කරන කොල්ලො,කෙල්ලන්ට උදව් කරන යාළුවෙක්.`
+// Silent Logger - pino ඕනි නෑ, මේකෙන් Error එක Fix වෙනවා
+const silentLogger = {
+  level: 'silent',
+  child: () => silentLogger,
+  trace: () => {}, debug: () => {}, info: () => {},
+  warn: () => {}, error: () => {}, fatal: () => {}
+}
+
+const SYSTEM_PROMPT = `Hi මම siaa AI ඔයාගෙ study , devoloping වගේ වැඩවලට උදවු කරන්න මට පුළුවන්.`
 
 async function askGroq(userMsg) {
   try {
@@ -22,11 +29,13 @@ async function askGroq(userMsg) {
     }, { headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' } })
     return res.data.choices[0].message.content
   } catch (e) {
+    console.log('Groq Error:', e.message)
     return 'අඩෝ ටිකක් අවුල් වුනා මචං 😅 ආයෙත් Message එකක් දාන්න!'
   }
 }
 
 async function startBot() {
+  // GitHub Secret එකෙන් Auth එක ගන්නවා
   if (process.env.AUTH_STATE && process.env.AUTH_STATE !== 'empty') {
     try {
       const decoded = Buffer.from(process.env.AUTH_STATE, 'base64').toString('utf-8')
@@ -36,13 +45,13 @@ async function startBot() {
         fs.writeFileSync(`auth_info/${name}`, content)
       }
       console.log('✅ Auth loaded from Secret!')
-    } catch (e) { console.log('Auth load failed') }
+    } catch (e) { console.log('Auth load failed, new Pair Code needed') }
   }
 
   const { state, saveCreds } = await useMultiFileAuthState('auth_info')
   const sock = makeWASocket({
     auth: state,
-    logger: pino({ level: 'silent' }),
+    logger: silentLogger,
     printQRInTerminal: false,
     browser: ['Tech Malli', 'Chrome', '1.0.0']
   })
@@ -60,10 +69,14 @@ async function startBot() {
     } catch (e) {}
   })
 
-  // 🔥 PAIR CODE එක ගන්න තැන - මේක තමයි අලුත් එක!
+  // 🔥 PAIR CODE එක ගන්න තැන
   if (!sock.authState.creds.registered) {
     setTimeout(async () => {
       try {
+        if (!PHONE_NUMBER) {
+          console.log('❌ PHONE_NUMBER Secret එක නෑ! Settings -> Secrets වල දාන්න')
+          return
+        }
         const code = await sock.requestPairingCode(PHONE_NUMBER)
         console.log('========================================')
         console.log(`🔥 PAIR CODE: ${code}`)
@@ -81,7 +94,10 @@ async function startBot() {
     if (connection === 'open') console.log('✅ Tech Malli Connected! 🔥')
     if (connection === 'close') {
       const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut
-      if (shouldReconnect) startBot()
+      if (shouldReconnect) {
+        console.log('Reconnecting...')
+        startBot()
+      }
     }
   })
 
@@ -91,12 +107,13 @@ async function startBot() {
     const from = msg.key.remoteJid
     const text = msg.message.conversation || msg.message.extendedTextMessage?.text
     if (!text) return
-    console.log(`Msg: ${text}`)
+    console.log(`Msg from ${from}: ${text}`)
     const isGroup = from.endsWith('@g.us')
     if (isGroup && !text.toLowerCase().includes('tech malli')) return
     await sock.sendPresenceUpdate('composing', from)
     const reply = await askGroq(text)
     await sock.sendMessage(from, { text: reply })
+    console.log(`Replied: ${reply.substring(0, 50)}...`)
   })
 }
 startBot()
