@@ -1,0 +1,7 @@
+      - name: Run Bot
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          AUTH_STATE: ${{ secrets.AUTH_STATE }}
+          PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+        run: |
+          timeout 340m node index.js || true
