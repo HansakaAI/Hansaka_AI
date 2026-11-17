@@ -1,4 +1,4 @@
-name: Siaabot
+name: Tech Malli Bot
 
 on:
   workflow_dispatch:
@@ -20,7 +20,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install Packages
         run: npm install
@@ -32,6 +31,5 @@ jobs:
           AUTH_STATE: ${{ secrets.AUTH_STATE }}
         run: |
           echo "Starting Tech Malli Bot..."
-          echo "Phone: $PHONE_NUMBER"
           timeout 340m node index.js || true
           echo "Bot stopped"
