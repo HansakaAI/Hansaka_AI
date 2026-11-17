@@ -7,9 +7,7 @@ const GROQ_KEY = process.env.GROQ_API_KEY
 const PHONE_NUMBER = process.env.PHONE_NUMBER // 947XXXXXXXX වගේ, 0 නැතුව
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
 
-const SYSTEM_PROMPT = `ඔයා Tech Malli. A/L IT කරන කොල්ලෙක්ට උදව් කරන යාළුවෙක් වගේ කතා කරන AI එකක්.
-සිංහල + English මිශ්‍ර කරලා, යාලුවෙක් වගේ, fun විදියට උත්තර දෙන්න. Emoticon දාන්න.
-A/L IT, Python, Database, Networking, HTML ගැන දන්නවා. කෙටියෙන් උත්තර දෙන්න.`
+const SYSTEM_PROMPT = `මම SiaaAI A/L TECH කරන කොල්ලො,කෙල්ලන්ට උදව් කරන යාළුවෙක්.`
 
 async function askGroq(userMsg) {
   try {
