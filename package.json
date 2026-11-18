@@ -1,10 +1,10 @@
 {
-  "name": "tech-malli-bot",
+  "name": "hansaka-md-bot",
   "version": "1.0.0",
   "type": "module",
   "scripts": { "start": "node index.js" },
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.0",
-    "axios": "^1.7.0"
+    "axios": "^1.7.0",
+    "node-telegram-bot-api": "^0.66.0"
   }
 }
