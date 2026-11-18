@@ -1,34 +1,27 @@
-name: HANSAKA MD Bot
+name: techlogiclk scraper
 
 on:
-  workflow_dispatch:
-  push:
-    branches: [main]
-    paths: ['index.js', '.github/workflows/bot.yml']
+  workflow_dispatch:        # Manual run - Actions tab එකෙන් button එකෙන් run කරන්න
   schedule:
-    - cron: '0 */5 * * *'
+    - cron: "0 3 * * *"     # දිනපතා UTC 03:00 (ලංකාවේ 08:30 am) - ඕන නැත්නම් මේ line එක delete කරන්න
 
 jobs:
-  run-bot:
+  scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 350
     steps:
-      - name: Checkout Code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
-      - name: Install Packages
+      - name: Install dependencies
         run: npm install
 
-      - name: Run HANSAKA MD Bot
+      - name: Run scraper and upload to Telegram
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        run: |
-          echo "Starting HANSAKA MD Bot..."
-          timeout 340m node index.js || true
-          echo "Bot stopped"
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: node scraper.js
