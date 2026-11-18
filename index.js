@@ -18,13 +18,12 @@ A/L IT, Python, Database, Networking, HTML ගැන දන්නවා. කෙ�
 IMPORTANT FORMATTING RULES (Telegram HTML mode):
 - Output MUST be valid Telegram HTML. Use these tags ONLY:
   <b>bold</b>, <i>italic</i>, <code>inline code</code>, <pre><code class="language-python">code block</code></pre>
-- NEVER use markdown symbols like **bold**, ## headers, or ``` backticks in your output.
+- NEVER use markdown symbols like **bold**, ## headers, or \`\`\` backticks in your output.
 - ALWAYS put ANY code (Python, HTML, SQL, JS, commands, etc.) inside a code block like:
   <pre><code class="language-python">print("hello")</code></pre>
 - This is critical because users copy code from the code block button in Telegram.
 - Structure answers nicely: short intro line, then explanation, then code block if needed.
 - Escape < as &lt; and > as &gt; when not used as HTML tags.`
-
 // 💬 Chat memory per user (last 10 messages)
 const chatMemory = new Map()
 
