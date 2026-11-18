@@ -1,4 +1,4 @@
-name: Tech Malli Bot
+name: HANSAKA MD Bot
 
 on:
   workflow_dispatch:
@@ -24,12 +24,11 @@ jobs:
       - name: Install Packages
         run: npm install
 
-      - name: Run Tech Malli Bot
+      - name: Run HANSAKA MD Bot
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
-          AUTH_STATE: ${{ secrets.AUTH_STATE }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: |
-          echo "Starting Tech Malli Bot..."
+          echo "Starting HANSAKA MD Bot..."
           timeout 340m node index.js || true
           echo "Bot stopped"
